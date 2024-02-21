@@ -5,7 +5,9 @@
 }}
 
 with fhv_tripdata as (
-    select * from {{ ref('stg_fhv_tripdata') }}
+    select *,
+           'FHV' as service_type -- Adding the new column with the value 'fhv'
+    from {{ ref('stg_fhv_tripdata') }}
     where pickup_locationid is not null
     and dropoff_locationid is not null
 ), 
@@ -21,6 +23,7 @@ select
     fhv_tripdata.pickup_datetime,
     fhv_tripdata.dropoff_datetime,
     fhv_tripdata.sr_flag,
+    fhv_tripdata.service_type,
     pickup_zone.borough as pickup_borough, 
     pickup_zone.zone as pickup_zone, 
     dropoff_zone.borough as dropoff_borough, 
