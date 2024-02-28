@@ -47,7 +47,7 @@ df \
     .write.parquet('data/pq/fhv/2019/10', mode='overwrite')
 
 # %%
-!ls -lh data/pq/fhv/2019/10/
+# !ls -lh data/pq/fhv/2019/10/
 # 6MB
 # %%
 df \
