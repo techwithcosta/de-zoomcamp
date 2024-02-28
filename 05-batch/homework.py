@@ -12,7 +12,7 @@ spark = SparkSession.builder \
     .getOrCreate()
 #%%
 print(spark.version)
-
+# 3.5.0
 #%%
 df_fhv_pd = pd.read_csv('data/raw/fhv_tripdata_2019-10.csv.gz', nrows=1000)
 
@@ -52,8 +52,6 @@ df \
 # %%
 df \
     .withColumn('pickup_date', F.to_date(df.pickup_datetime)) \
-    .withColumn('dropoff_date', F.to_date(df.dropOff_datetime)) \
-    .select('pickup_date', 'dropoff_date') \
     .filter(F.col('pickup_date') == '2019-10-15') \
     .count()
 # %%
@@ -61,18 +59,27 @@ df.createOrReplaceTempView("trips_data")
 #%%
 spark.sql("""
 SELECT
-    COUNT(1) as count
+    COUNT(1) AS count
 FROM
     trips_data
-WHERE DATE(pickup_datetime) == '2019-10-15'
+WHERE
+    DATE(pickup_datetime) == '2019-10-15'
 """).show()
 # How many taxi trips were there on the 15th of October?
 # 62,610
 # %%
+df \
+    .withColumn('pickup_datetime_secs', F.to_unix_timestamp(df.pickup_datetime)) \
+    .withColumn('dropoff_datetime_secs', F.to_unix_timestamp(df.dropOff_datetime)) \
+    .withColumn('trip_duration_hours', (F.col('dropoff_datetime_secs') - F.col('pickup_datetime_secs')) / 3600) \
+    .agg({'trip_duration_hours': 'max'}) \
+    .show()
+# %%
 spark.sql("""
 SELECT
-    MAX((unix_timestamp(TIMESTAMP(dropOff_datetime)) - unix_timestamp(TIMESTAMP(pickup_datetime)))) / 3600 AS max_duration_hours
-FROM trips_data
+    MAX((unix_timestamp(TIMESTAMP(dropOff_datetime)) - unix_timestamp(TIMESTAMP(pickup_datetime)))) / 3600 AS max_trip_length_hours
+FROM
+    trips_data
 """).show()
 # What is the length of the longest trip in the dataset in hours?
 # 631,152.5
@@ -81,9 +88,11 @@ spark.sql("""
 SELECT
     pickup_datetime,
     dropOff_datetime,
-    (unix_timestamp(TIMESTAMP(dropOff_datetime)) - unix_timestamp(TIMESTAMP(pickup_datetime))) / 3600 AS max_duration_hours
-FROM trips_data
-ORDER BY max_duration_hours DESC
+    (unix_timestamp(TIMESTAMP(dropOff_datetime)) - unix_timestamp(TIMESTAMP(pickup_datetime))) / 3600 AS max_trip_length_hours
+FROM
+    trips_data
+ORDER BY
+    max_trip_length_hours DESC
 LIMIT 1
 """).show()
 # %%
@@ -107,17 +116,26 @@ df_zones.printSchema()
 df_zones.show()
 # %%
 df_zones.createOrReplaceTempView("zones")
+#%%
+df.join(
+    df_zones,
+    on=[df.PUlocationID == df_zones.LocationID],
+    how='left') \
+    .groupBy(['PULocationID', 'Zone']) \
+    .agg(F.count('*').alias('trip_count')) \
+    .sort('trip_count') \
+    .show(1)
 # %%
 spark.sql("""
 SELECT
     t.PUlocationID AS pickup_location,
     zpu.Zone AS zone,
-    COUNT(1) AS count
+    COUNT(1) AS trip_count
 FROM trips_data t
 JOIN zones zpu ON t.PULocationID = zpu.LocationID
 GROUP BY
     t.PUlocationID, zpu.Zone
-ORDER BY count
+ORDER BY trip_count
 LIMIT 1
 """).show()
 # Jamaica Bay
