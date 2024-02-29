@@ -14,7 +14,7 @@ spark = SparkSession.builder \
 print(spark.version)
 # 3.5.0
 #%%
-df_fhv_pd = pd.read_csv('data/raw/fhv_tripdata_2019-10.csv.gz', nrows=1000)
+df_fhv_pd = pd.read_csv('../data/raw/fhv_tripdata_2019-10.csv.gz', nrows=1000)
 
 spark.createDataFrame(df_fhv_pd).schema
 
@@ -35,7 +35,7 @@ schema = types.StructType([
 df = spark.read \
     .option("header", "true") \
     .schema(schema) \
-    .csv('data/raw/fhv_tripdata_2019-10.csv.gz')
+    .csv('../data/raw/fhv_tripdata_2019-10.csv.gz')
 
 #%%
 df.printSchema()
@@ -44,10 +44,10 @@ df.show()
 # %%
 df \
     .repartition(6) \
-    .write.parquet('data/pq/fhv/2019/10', mode='overwrite')
+    .write.parquet('../data/pq/fhv/2019/10', mode='overwrite')
 
 # %%
-# !ls -lh data/pq/fhv/2019/10/
+# !ls -lh ../data/pq/fhv/2019/10/
 # 6MB
 # %%
 df \
@@ -109,7 +109,7 @@ schema = types.StructType([
 df_zones = spark.read \
     .option("header", "true") \
     .schema(schema) \
-    .csv('data/raw/taxi_zone_lookup.csv')
+    .csv('../data/raw/taxi_zone_lookup.csv')
 #%%
 df_zones.printSchema()
 # %%
