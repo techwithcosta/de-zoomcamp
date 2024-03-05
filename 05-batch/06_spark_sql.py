@@ -44,7 +44,7 @@ df_trips_data.createOrReplaceTempView("trips_data")
 # df_trips_data.registerTempTable("trips_data")
 #%%
 spark.sql("""
-SELECT * FROM df_trips_data LIMIT 10
+SELECT * FROM trips_data LIMIT 10
 """).show()
 # %%
 spark.sql("""
