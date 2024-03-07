@@ -91,20 +91,20 @@ CREATE MATERIALIZED VIEW trip_time_stats AS
     JOIN taxi_zone tz2 ON trip_data.DOLocationID = tz2.location_id
     GROUP BY tz1.Zone, tz2.Zone;
 
--- Find the pair of taxi zones with the highest average trip time
+-- (Option 1) Find the pair of taxi zones with the highest average trip time
 SELECT pickup_zone, dropoff_zone, avg_trip_time
 FROM trip_time_stats
 ORDER BY avg_trip_time DESC
 LIMIT 1;
 
--- Find the pair of taxi zones with the highest average trip time
+-- (Option 2) Find the pair of taxi zones with the highest average trip time
 WITH max_avg_time AS (
     SELECT MAX(avg_trip_time) AS max_avg_trip_time
     FROM trip_time_stats
 )
 SELECT pickup_zone, dropoff_zone, avg_trip_time
 FROM trip_time_stats, max_avg_time
-WHERE avg_trip_time >= max_avg_trip_time;
+WHERE avg_trip_time = max_avg_trip_time;
 ```
 >ANSWER
 ```
@@ -136,20 +136,20 @@ CREATE MATERIALIZED VIEW trip_time_stats_with_count AS
     JOIN taxi_zone tz2 ON trip_data.DOLocationID = tz2.location_id
     GROUP BY tz1.Zone, tz2.Zone;
 
--- Find the pair of taxi zones with the highest average trip time
+-- (Option 1) Find the number of trips for the pair of taxi zones with the highest average trip time
 SELECT pickup_zone, dropoff_zone, avg_trip_time, num_trips
 FROM trip_time_stats_with_count
 ORDER BY avg_trip_time DESC
 LIMIT 1;
 
--- Find the pair of taxi zones with the highest average trip time
+-- (Option 2) Find the number of trips for the pair of taxi zones with the highest average trip time
 WITH max_avg_time AS (
     SELECT MAX(avg_trip_time) AS max_avg_trip_time
     FROM trip_time_stats_with_count
 )
 SELECT pickup_zone, dropoff_zone, avg_trip_time, num_trips
 FROM trip_time_stats_with_count, max_avg_time
-WHERE avg_trip_time >= max_avg_trip_time;
+WHERE avg_trip_time = max_avg_trip_time;
 ```
 >ANSWER
 ```
