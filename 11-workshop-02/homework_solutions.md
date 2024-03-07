@@ -105,6 +105,11 @@ WITH max_avg_time AS (
 SELECT pickup_zone, dropoff_zone, avg_trip_time
 FROM trip_time_stats, max_avg_time
 WHERE avg_trip_time = max_avg_trip_time;
+
+--   pickup_zone   | dropoff_zone | avg_trip_time 
+-- ----------------+--------------+---------------
+--  Yorkville East | Steinway     | 23:59:33
+-- (1 row)
 ```
 >ANSWER
 ```
@@ -150,6 +155,11 @@ WITH max_avg_time AS (
 SELECT pickup_zone, dropoff_zone, avg_trip_time, num_trips
 FROM trip_time_stats_with_count, max_avg_time
 WHERE avg_trip_time = max_avg_trip_time;
+
+--   pickup_zone   | dropoff_zone | avg_trip_time | num_trips 
+-- ----------------+--------------+---------------+-----------
+--  Yorkville East | Steinway     | 23:59:33      |         1
+-- (1 row)
 ```
 >ANSWER
 ```
@@ -184,6 +194,13 @@ WHERE trip_data.tpep_pickup_datetime >= ((SELECT MAX(tpep_pickup_datetime) FROM 
 GROUP BY pickup_zone
 ORDER BY number_of_trips DESC
 LIMIT 3;
+
+--      pickup_zone     | number_of_trips 
+-- ---------------------+-----------------
+--  LaGuardia Airport   |              19
+--  Lincoln Square East |              17
+--  JFK Airport         |              17
+-- (3 rows)
 ```
 >ANSWER
 ```
