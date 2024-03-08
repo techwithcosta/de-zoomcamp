@@ -19,7 +19,7 @@ What's the output?
 > To install PySpark follow this [guide](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/05-batch/setup/pyspark.md)
 
 >SOLUTION
-```
+```python
 print(spark.version)
 ```
 >ANSWER ✅
@@ -43,12 +43,13 @@ What is the average size of the Parquet (ending with .parquet extension) Files t
 - 87MB
 
 >SOLUTION
-```
+```python
 df \
     .repartition(6) \
     .write.parquet('data/pq/fhv/2019/10', mode='overwrite')
-
-!ls -lh data/pq/fhv/2019/10/
+```
+```bash
+ls -lh data/pq/fhv/2019/10/
 ```
 >ANSWER ✅
 ```
@@ -72,15 +73,15 @@ Consider only trips that started on the 15th of October.
 > Be aware of columns order when defining schema
 
 >SOLUTION
-```
-PYSPARK
+```python
+# PYSPARK
 
 df \
     .withColumn('pickup_date', F.to_date(df.pickup_datetime)) \
     .filter(F.col('pickup_date') == '2019-10-15') \
     .count()
 
-PYSPARK.SQL
+# PYSPARK.SQL
 
 spark.sql("""
 SELECT
@@ -108,8 +109,8 @@ What is the length of the longest trip in the dataset in hours?
 - 3.32 Hours
 
 >SOLUTION
-```
-PYSPARK
+```python
+# PYSPARK
 
 df \
     .withColumn('pickup_datetime_secs', F.to_unix_timestamp(df.pickup_datetime)) \
@@ -118,7 +119,7 @@ df \
     .agg({'trip_duration_hours': 'max'}) \
     .show()
 
-PYSPARK.SQL
+# PYSPARK.SQL
 
 spark.sql("""
 SELECT
@@ -167,8 +168,8 @@ Using the zone lookup data and the FHV October 2019 data, what is the name of th
 - Crown Heights North
 
 >SOLUTION
-```
-PYSPARK
+```python
+# PYSPARK
 
 df.join(
     df_zones,
@@ -179,7 +180,7 @@ df.join(
     .sort('trip_count') \
     .show(1)
 
-PYSPARK.SQL
+# PYSPARK.SQL
 
 spark.sql("""
 SELECT

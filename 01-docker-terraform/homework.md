@@ -128,7 +128,7 @@ Remember that `lpep_pickup_datetime` and `lpep_dropoff_datetime` columns are in 
 - 89009
 
 >SOLUTION
-```
+```sql
 SELECT
     COUNT(*) AS total_trips
 FROM
@@ -153,7 +153,7 @@ Use the pick up time for your calculations.
 - 2019-09-21
 
 >SOLUTION
-```
+```sql
 SELECT
     DATE (lpep_pickup_datetime) AS pickup_date,
     trip_distance
@@ -182,7 +182,7 @@ Which were the 3 pick up Boroughs that had a sum of total_amount superior to 500
 - "Brooklyn" "Queens" "Staten Island"
 
 >SOLUTION
-```
+```sql
 SELECT
     zpu."Borough",
     SUM(total_amount) AS total_amount_sum
@@ -220,7 +220,7 @@ Note: it's not a typo, it's `tip` , not `trip`
 - Long Island City/Queens Plaza
 
 >SOLUTION
-```
+```sql
 SELECT
     zpu."Zone" AS pick_up_zone,
     zdo."Zone" AS drop_off_zone,

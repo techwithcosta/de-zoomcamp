@@ -13,8 +13,8 @@ Create a table in BQ using the Green Taxi Trip Records for 2022 (do not partitio
 </p>
 
 >SOLUTION
-```
-PYTHON CODE
+```python
+# PYTHON
 
 # download parquet files automatically
 import os
@@ -25,8 +25,9 @@ months = [str(month).zfill(2) for month in range(1, 13)]
 for month in months:
     url = f'https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_{year}-{month}.parquet'
     os.system(f'wget {url}')
-
-SQL CODE
+```
+```sql
+-- SQL
 
 -- Creating external table from parquet files (GCS)
 CREATE OR REPLACE EXTERNAL TABLE `terraform-demo-412110.ny_taxi.external_green_tripdata`
@@ -66,7 +67,7 @@ Question 1: What is count of records for the 2022 Green Taxi Data??
 - 253,647
 
 >SOLUTION
-```
+```sql
 SELECT COUNT(1) AS total_trips FROM `ny_taxi.external_green_tripdata`
 ```
 >ANSWER ✅
@@ -84,7 +85,7 @@ What is the estimated amount of data that will be read when this query is execut
 - 2.14 MB for the External Table and 0MB for the Materialized Table
 
 >SOLUTION
-```
+```sql
 SELECT COUNT(DISTINCT PULocationID) AS unique_pulocationid FROM ny_taxi.external_green_tripdata;
 -- 0 B
 
@@ -104,7 +105,7 @@ How many records have a fare_amount of 0?
 - 1,622
 
 >SOLUTION
-```
+```sql
 SELECT COUNT(1) AS total_trips FROM ny_taxi.external_green_tripdata
 WHERE fare_amount = 0
 ```
@@ -139,7 +140,7 @@ Choose the answer which most closely matches.</br>
 - 10.31 MB for non-partitioned table and 10.31 MB for the partitioned table
 
 >SOLUTION
-```
+```sql
 SELECT DISTINCT PULocationID FROM ny_taxi.green_tripdata_non_partitioned
 WHERE DATE(lpep_pickup_datetime) BETWEEN '2022-06-01' AND '2022-06-30';
 -- 12.82 MB
@@ -180,7 +181,7 @@ False
 No Points: Write a `SELECT count(*)` query FROM the materialized table you created. How many bytes does it estimate will be read? Why?
 
 >SOLUTION
-```
+```sql
 SELECT count(*) FROM `ny_taxi.green_tripdata_non_partitioned`
 -- 0 B
 ```
