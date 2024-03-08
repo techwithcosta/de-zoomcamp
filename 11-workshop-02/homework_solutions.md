@@ -295,7 +295,7 @@ GROUP BY pickup_zone
 ORDER BY number_of_trips DESC
 LIMIT 3;
 
--- VERSION 3 (with MV and WHERE)
+-- VERSION 2 (with MV and WHERE)
 
 CREATE MATERIALIZED VIEW top_3_busiest_zones_pickups AS
     WITH latest_pickup_datetime AS (
