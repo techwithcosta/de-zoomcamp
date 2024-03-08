@@ -31,7 +31,7 @@ docker run --help
 
 --rm    Automatically remove the container when it exits
 ```
->ANSWER
+>ANSWER ✅
 ```
 --rm
 ```
@@ -60,7 +60,7 @@ pip        23.0.1
 setuptools 58.1.0
 wheel      0.42.0
 ```
->ANSWER
+>ANSWER ✅
 ```
 0.42.0
 ```
@@ -137,7 +137,7 @@ WHERE
     DATE (lpep_pickup_datetime) = '2019-09-18'
     AND DATE (lpep_dropoff_datetime) = '2019-09-18';
 ```
->ANSWER
+>ANSWER ✅
 ```
 15612
 ```
@@ -164,7 +164,7 @@ ORDER BY
 LIMIT
     1;
 ```
->ANSWER
+>ANSWER ✅
 ```
 2019-09-26
 ```
@@ -201,7 +201,7 @@ ORDER BY
 LIMIT
     3;
 ```
->ANSWER
+>ANSWER ✅
 ```
 "Brooklyn" "Manhattan" "Queens"
 ```
@@ -246,7 +246,7 @@ ORDER BY
 LIMIT
     1;
 ```
->ANSWER
+>ANSWER ✅
 ```
 JFK Airport
 ```
@@ -365,7 +365,7 @@ Paste the output of this command into the homework submission form.
 ```
 terraform apply
 ```
->ANSWER
+>ANSWER ✅
 ```
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
   + create

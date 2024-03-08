@@ -69,7 +69,7 @@ Question 1: What is count of records for the 2022 Green Taxi Data??
 ```
 SELECT COUNT(1) AS total_trips FROM `ny_taxi.external_green_tripdata`
 ```
->ANSWER
+>ANSWER ✅
 ```
 840,402
 ```
@@ -91,7 +91,7 @@ SELECT COUNT(DISTINCT PULocationID) AS unique_pulocationid FROM ny_taxi.external
 SELECT COUNT(DISTINCT PULocationID) AS unique_pulocationid FROM ny_taxi.green_tripdata_non_partitioned;
 -- 6.41 MB
 ```
->ANSWER
+>ANSWER ✅
 ```
 0 MB for the External Table and 6.41MB for the Materialized Table
 ```
@@ -108,7 +108,7 @@ How many records have a fare_amount of 0?
 SELECT COUNT(1) AS total_trips FROM ny_taxi.external_green_tripdata
 WHERE fare_amount = 0
 ```
->ANSWER
+>ANSWER ✅
 ```
 1,622
 ```
@@ -120,7 +120,7 @@ What is the best strategy to make an optimized table in Big Query if your query 
 - Partition by lpep_pickup_datetime and Partition by PUlocationID
 - Cluster on by lpep_pickup_datetime and Cluster on PUlocationID
 
->ANSWER
+>ANSWER ✅
 ```
 Partition by lpep_pickup_datetime Cluster on PUlocationID
 ```
@@ -148,7 +148,7 @@ SELECT DISTINCT PULocationID FROM ny_taxi.green_tripdata_partitioned
 WHERE DATE(lpep_pickup_datetime) BETWEEN '2022-06-01' AND '2022-06-30';
 -- 1.12 MB
 ```
->ANSWER
+>ANSWER ✅
 ```
 12.82 MB for non-partitioned table and 1.12 MB for the partitioned table
 ```
@@ -161,7 +161,7 @@ Where is the data stored in the External Table you created?
 - Big Table
 - Container Registry
 
->ANSWER
+>ANSWER ✅
 ```
 GCP Bucket
 ```
@@ -171,7 +171,7 @@ It is best practice in Big Query to always cluster your data:
 - True
 - False
 
->ANSWER
+>ANSWER ✅
 ```
 False
 ```
@@ -184,7 +184,7 @@ No Points: Write a `SELECT count(*)` query FROM the materialized table you creat
 SELECT count(*) FROM `ny_taxi.green_tripdata_non_partitioned`
 -- 0 B
 ```
->ANSWER
+>ANSWER ✅
 ```
 0 B, because the table is cached
 ```

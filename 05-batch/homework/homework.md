@@ -22,7 +22,7 @@ What's the output?
 ```
 print(spark.version)
 ```
->ANSWER
+>ANSWER ✅
 ```
 3.5.0
 ```
@@ -50,7 +50,7 @@ df \
 
 !ls -lh data/pq/fhv/2019/10/
 ```
->ANSWER
+>ANSWER ✅
 ```
 6MB (6,4M)
 ```
@@ -91,7 +91,7 @@ WHERE
     DATE(pickup_datetime) == '2019-10-15'
 """).show()
 ```
->ANSWER
+>ANSWER ✅
 ```
 62,610
 ```
@@ -127,7 +127,7 @@ FROM
     trips_data
 """).show()
 ```
->ANSWER
+>ANSWER ✅
 ```
 631,152.50 Hours
 ```
@@ -147,7 +147,7 @@ Spark’s User Interface which shows the application's dashboard runs on which l
 ```
 localhost:4040
 ```
->ANSWER
+>ANSWER ✅
 ```
 4040
 ```
@@ -194,7 +194,7 @@ ORDER BY trip_count
 LIMIT 1
 """).show()
 ```
->ANSWER
+>ANSWER ✅
 ```
 Jamaica Bay
 ```

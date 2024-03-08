@@ -27,7 +27,7 @@ You'll need to have completed the ["Build the first dbt models"](https://www.you
 - It applies a _limit 100_ only to our staging models
 - Nothing
 
->ANSWER
+>ANSWER ✅
 ```
 It applies a limit 100 only to our staging models
 ```
@@ -41,7 +41,7 @@ It applies a limit 100 only to our staging models
 - The code from any development branch that has been opened based on main
 - The code from the development branch we are requesting to merge to main
 
->ANSWER
+>ANSWER ✅
 ```
 The code from the development branch we are requesting to merge to main
 ```
@@ -71,7 +71,7 @@ Added fact_fhv_trips.sql model to dbt.
 Built and ran models.
 Checked size of fact_fhv_trips table.
 ```
->ANSWER
+>ANSWER ✅
 ```
 22998722
 ```
@@ -91,7 +91,7 @@ Create a dashboard with some tiles that you find interesting to explore the data
 ```
 https://lookerstudio.google.com/reporting/5dea4fec-a4e0-4830-a73c-4f4db812c483
 ```
->ANSWER
+>ANSWER ✅
 ```
 Yellow
 ```
