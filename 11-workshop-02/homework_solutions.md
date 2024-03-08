@@ -173,6 +173,7 @@ CREATE MATERIALIZED VIEW trip_anomalies AS
 -- There are situation where min trip distance is zero
 -- The trip distance is also interesting to cross (e.g. 5 miles trips taking 20+ hours)
 -- It would be cool to identify very short trips comparing to avg distance, like starting and canceling the timer
+
 SELECT
     *,
     (max_trip_time - avg_trip_time) AS trip_time_difference
