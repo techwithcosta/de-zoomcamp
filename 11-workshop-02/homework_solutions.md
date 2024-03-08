@@ -295,40 +295,21 @@ GROUP BY pickup_zone
 ORDER BY number_of_trips DESC
 LIMIT 3;
 
--- VERSION 2 (with MV and JOIN)
-
-CREATE MATERIALIZED VIEW top_3_busiest_zones_pickups AS
-    WITH max_pickup_datetime AS (
-        SELECT MAX(tpep_pickup_datetime) AS max_pickup_time
-        FROM trip_data
-    )
-    SELECT
-        tz1.Zone AS pickup_zone,
-        COUNT(1) AS number_of_trips
-    FROM trip_data
-    JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
-    JOIN max_pickup_datetime ON trip_data.tpep_pickup_datetime >= (max_pickup_time - INTERVAL '17' HOUR)
-    GROUP BY pickup_zone
-    ORDER BY number_of_trips DESC
-    LIMIT 3;
-
-SELECT pickup_zone, number_of_trips FROM top_3_busiest_zones_pickups;
-
 -- VERSION 3 (with MV and WHERE)
 
 CREATE MATERIALIZED VIEW top_3_busiest_zones_pickups AS
-    WITH max_pickup_datetime AS (
-        SELECT MAX(tpep_pickup_datetime) AS max_pickup_time
+    WITH latest_pickup_datetime AS (
+        SELECT MAX(tpep_pickup_datetime) AS latest_pickup_datetime
         FROM trip_data
     )
     SELECT
-        tz1.Zone AS pickup_zone,
+        taxi_zone.Zone AS pickup_zone,
         COUNT(1) AS number_of_trips
-    FROM trip_data
-    JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
-    WHERE trip_data.tpep_pickup_datetime >= (
-        SELECT max_pickup_time - INTERVAL '17' HOUR FROM max_pickup_datetime
-    )
+    FROM
+        latest_pickup_datetime,
+        trip_data
+    JOIN taxi_zone ON trip_data.PULocationID = taxi_zone.location_id
+    WHERE tpep_pickup_datetime >= latest_pickup_datetime - INTERVAL '17' HOUR
     GROUP BY pickup_zone
     ORDER BY number_of_trips DESC
     LIMIT 3;
