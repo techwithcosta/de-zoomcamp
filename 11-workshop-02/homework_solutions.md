@@ -182,6 +182,14 @@ WHERE
     max_trip_time - avg_trip_time > '01:00:00'
 ORDER BY 
     trip_time_difference;
+
+--           pickup_zone          |          dropoff_zone          | num_trips | min_trip_time |  avg_trip_time  | max_trip_time  | min_trip_distance | avg_trip_distance | max_trip_distance | trip_time_difference  
+-- -------------------------------+--------------------------------+-----------+---------------+-----------------+----------------+-------------------+-------------------+-------------------+-----------------------
+--  JFK Airport                   | NV                             |        44 | 00:00:00      | 00:14:27.318182 | 01:16:12       |                 0 |              7.78 |             44.25 | 01:01:44.681818
+--  Gramercy                      | Bushwick South                 |         5 | 00:16:24      | 00:40:01.2      | 01:48:27       |              4.56 |              8.25 |             20.37 | 01:08:25.8
+--  Clinton East                  | Lincoln Square East            |       161 | 00:00:41      | 00:06:20.968944 | 01:15:12       |              0.01 |              1.30 |             11.09 | 01:08:51.031056
+--  East Chelsea                  | JFK Airport                    |        48 | 00:25:25      | 00:32:23.541667 | 01:47:43       |             15.18 |             18.10 |              51.8 | 01:15:19.458333
+--  Garment District              | JFK Airport                    |        66 | 00:23:16      | 00:30:50.515152 | 01:48:26       |              4.42 |             16.92 |              18.2 | 01:17:35.484848
 ```
 
 ## Question 2
