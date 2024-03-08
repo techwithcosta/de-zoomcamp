@@ -87,8 +87,8 @@ p.s. The trip time between taxi zones does not take symmetricity into account, i
 CREATE MATERIALIZED VIEW trip_time_stats AS
     SELECT tz1.Zone AS pickup_zone,
            tz2.Zone AS dropoff_zone,
-           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
            MIN(tpep_dropoff_datetime - tpep_pickup_datetime) AS min_trip_time,
+           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
            MAX(tpep_dropoff_datetime - tpep_pickup_datetime) AS max_trip_time
     FROM trip_data
     JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
@@ -119,8 +119,8 @@ WHERE avg_trip_time = max_avg_trip_time;
 CREATE MATERIALIZED VIEW trip_time_stats AS
     SELECT tz1.Zone AS pickup_zone,
            tz2.Zone AS dropoff_zone,
-           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
            MIN(tpep_dropoff_datetime - tpep_pickup_datetime) AS min_trip_time,
+           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
            MAX(tpep_dropoff_datetime - tpep_pickup_datetime) AS max_trip_time
     FROM trip_data
     JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
@@ -146,6 +146,43 @@ FROM trip_time_stats;
 ```
 Yorkville East, Steinway
 ```
+```sql
+-- BONUS (anomalies)
+
+-- Create a MV with trip_time and trip_distance stats to spot anomalies, such as outliers
+-- Outliers could be caused by errors in data entry, extreme traffic conditions, or other anomalies
+-- One common approach is to remove trip durations that fall outside a certain range of standard deviations from the mean
+-- We're interested in instances where the maximum trip time is much higher than the average trip time for zones pairs
+
+CREATE MATERIALIZED VIEW trip_anomalies AS
+    SELECT tz1.Zone AS pickup_zone,
+        tz2.Zone AS dropoff_zone,
+        COUNT(*) AS num_trips,
+        MIN(tpep_dropoff_datetime - tpep_pickup_datetime) AS min_trip_time,
+        AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
+        MAX(tpep_dropoff_datetime - tpep_pickup_datetime) AS max_trip_time,
+        MIN(trip_distance) AS min_trip_distance,
+        ROUND(AVG(trip_distance), 2) AS avg_trip_distance,
+        MAX(trip_distance) AS max_trip_distance
+    FROM trip_data
+    JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
+    JOIN taxi_zone tz2 ON trip_data.DOLocationID = tz2.location_id
+    GROUP BY tz1.Zone, tz2.Zone;
+
+-- Query with a constant time threshold to spot these situations
+-- There are situation where min trip distance is zero
+-- The trip distance is also interesting to cross (e.g. 5 miles trips taking 20+ hours)
+-- It would be cool to identify very short trips comparing to avg distance, like starting and canceling the timer
+SELECT
+    *,
+    (max_trip_time - avg_trip_time) AS trip_time_difference
+FROM 
+    trip_anomalies
+WHERE 
+    max_trip_time - avg_trip_time > '01:00:00'
+ORDER BY 
+    trip_time_difference;
+```
 
 ## Question 2
 
@@ -166,8 +203,8 @@ CREATE MATERIALIZED VIEW trip_time_stats_with_count AS
     SELECT tz1.Zone AS pickup_zone,
            tz2.Zone AS dropoff_zone,
            COUNT(*) AS num_trips,
-           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
            MIN(tpep_dropoff_datetime - tpep_pickup_datetime) AS min_trip_time,
+           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
            MAX(tpep_dropoff_datetime - tpep_pickup_datetime) AS max_trip_time
     FROM trip_data
     JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
@@ -195,8 +232,8 @@ CREATE MATERIALIZED VIEW trip_time_stats_with_count AS
     SELECT tz1.Zone AS pickup_zone,
            tz2.Zone AS dropoff_zone,
            COUNT(*) AS num_trips,
-           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
            MIN(tpep_dropoff_datetime - tpep_pickup_datetime) AS min_trip_time,
+           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
            MAX(tpep_dropoff_datetime - tpep_pickup_datetime) AS max_trip_time
     FROM trip_data
     JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
