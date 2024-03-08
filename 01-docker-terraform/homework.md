@@ -26,10 +26,9 @@ Which tag has the following text? - *Automatically remove the container when it 
 - `--rm`
 
 >SOLUTION
-```
+```bash
 docker run --help
-
---rm    Automatically remove the container when it exits
+# --rm    Automatically remove the container when it exits
 ```
 >ANSWER ✅
 ```
@@ -50,15 +49,15 @@ What is version of the package *wheel* ?
 - 58.1.0
 
 >SOLUTION
-```
+```bash
 docker run -it --entrypoint=bash python:3.9
 
-root@045bf8cb0df2:/# pip list
-Package    Version
----------- -------
-pip        23.0.1
-setuptools 58.1.0
-wheel      0.42.0
+# root@045bf8cb0df2:/# pip list
+# Package    Version
+# ---------- -------
+# pip        23.0.1
+# setuptools 58.1.0
+# wheel      0.42.0
 ```
 >ANSWER ✅
 ```
@@ -74,7 +73,7 @@ We'll use the green taxi trips from September 2019:
 ```wget https://github.com/DataTalksClub/nyc-tlc-data/releases/download/green/green_tripdata_2019-09.csv.gz```
 
 >SOLUTION
-```
+```bash
 URL="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/green/green_tripdata_2019-09.csv.gz"
 
 docker run -it \
@@ -97,7 +96,7 @@ You will also need the dataset with zones:
 Download this data and put it into Postgres (with jupyter notebooks or with a pipeline)
 
 >SOLUTION
-```
+```bash
 URL="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/misc/taxi_zone_lookup.csv"
 
 docker run -it \
@@ -264,7 +263,7 @@ Modify the files as necessary to create a GCP Bucket and Big Query Dataset.
 
 >SOLUTION
 ```
-# main.tf
+// main.tf
 
 terraform {
   required_providers {
@@ -312,7 +311,7 @@ resource "google_bigquery_dataset" "dataset" {
 
 >SOLUTION
 ```
-# variables.tf
+// variables.tf
 
 variable "credentials" {
   description = "My Credentials"
@@ -362,7 +361,7 @@ terraform apply
 Paste the output of this command into the homework submission form.
 
 >SOLUTION
-```
+```bash
 terraform apply
 ```
 >ANSWER ✅
