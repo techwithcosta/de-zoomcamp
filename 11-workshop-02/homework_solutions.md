@@ -49,6 +49,8 @@ CREATE MATERIALIZED VIEW latest_dropoff_time AS
         ON trip_data.DOLocationID = taxi_zone.location_id
     WHERE trip_data.tpep_dropoff_datetime = t.latest_dropoff_time;
 
+SELECT taxi_zone, latest_dropoff_time FROM latest_dropoff_time;
+
 --    taxi_zone    | latest_dropoff_time
 -- ----------------+---------------------
 --  Midtown Center | 2022-01-03 17:24:54
@@ -79,25 +81,27 @@ p.s. The trip time between taxi zones does not take symmetricity into account, i
 ```sql
 -- Check MVs here: http://localhost:5691/materialized_views/
 
+-- VERSION 1
+
 -- Create materialized view to compute average, min, and max trip time between each taxi zone
 CREATE MATERIALIZED VIEW trip_time_stats AS
     SELECT tz1.Zone AS pickup_zone,
            tz2.Zone AS dropoff_zone,
-           AVG(trip_data.tpep_dropoff_datetime - trip_data.tpep_pickup_datetime) AS avg_trip_time,
-           MIN(trip_data.tpep_dropoff_datetime - trip_data.tpep_pickup_datetime) AS min_trip_time,
-           MAX(trip_data.tpep_dropoff_datetime - trip_data.tpep_pickup_datetime) AS max_trip_time
+           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
+           MIN(tpep_dropoff_datetime - tpep_pickup_datetime) AS min_trip_time,
+           MAX(tpep_dropoff_datetime - tpep_pickup_datetime) AS max_trip_time
     FROM trip_data
     JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
     JOIN taxi_zone tz2 ON trip_data.DOLocationID = tz2.location_id
     GROUP BY tz1.Zone, tz2.Zone;
 
--- (Option 1) Find the pair of taxi zones with the highest average trip time
+-- (Query 1) Find the pair of taxi zones with the highest average trip time
 SELECT pickup_zone, dropoff_zone, avg_trip_time
 FROM trip_time_stats
 ORDER BY avg_trip_time DESC
 LIMIT 1;
 
--- (Option 2) Find the pair of taxi zones with the highest average trip time
+-- (Query 2, equivalent to Query 1) Find the pair of taxi zones with the highest average trip time
 WITH max_avg_time AS (
     SELECT MAX(avg_trip_time) AS max_avg_trip_time
     FROM trip_time_stats
@@ -105,6 +109,33 @@ WITH max_avg_time AS (
 SELECT pickup_zone, dropoff_zone, avg_trip_time
 FROM trip_time_stats, max_avg_time
 WHERE avg_trip_time = max_avg_trip_time;
+
+-- VERSION 2 (simplification)
+
+-- Since we only care about the maximum
+-- Let's include ORDER BY and LIMIT in the MV
+-- This avoids recomputation in the following batch query
+
+CREATE MATERIALIZED VIEW trip_time_stats AS
+    SELECT tz1.Zone AS pickup_zone,
+           tz2.Zone AS dropoff_zone,
+           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
+           MIN(tpep_dropoff_datetime - tpep_pickup_datetime) AS min_trip_time,
+           MAX(tpep_dropoff_datetime - tpep_pickup_datetime) AS max_trip_time
+    FROM trip_data
+    JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
+    JOIN taxi_zone tz2 ON trip_data.DOLocationID = tz2.location_id
+    GROUP BY tz1.Zone, tz2.Zone
+    ORDER BY avg_trip_time DESC
+    LIMIT 1;
+
+-- We'll get a warning:
+-- NOTICE:  The ORDER BY clause in the CREATE MATERIALIZED VIEW statement does not guarantee that the rows selected out of this materialized view is returned in this order.
+-- It only indicates the physical clustering of the data, which may improve the performance of queries issued against this materialized view.
+-- We can ignore it because we're limiting the query
+
+SELECT pickup_zone, dropoff_zone, avg_trip_time
+FROM trip_time_stats;
 
 --   pickup_zone   | dropoff_zone | avg_trip_time 
 -- ----------------+--------------+---------------
@@ -128,26 +159,28 @@ Options:
 
 >SOLUTION
 ```sql
+-- VERSION 1
+
 -- Create materialized view to compute average, min, max trip time, and number of trips between each taxi zone pair
 CREATE MATERIALIZED VIEW trip_time_stats_with_count AS
     SELECT tz1.Zone AS pickup_zone,
            tz2.Zone AS dropoff_zone,
            COUNT(*) AS num_trips,
-           AVG(trip_data.tpep_dropoff_datetime - trip_data.tpep_pickup_datetime) AS avg_trip_time,
-           MIN(trip_data.tpep_dropoff_datetime - trip_data.tpep_pickup_datetime) AS min_trip_time,
-           MAX(trip_data.tpep_dropoff_datetime - trip_data.tpep_pickup_datetime) AS max_trip_time
+           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
+           MIN(tpep_dropoff_datetime - tpep_pickup_datetime) AS min_trip_time,
+           MAX(tpep_dropoff_datetime - tpep_pickup_datetime) AS max_trip_time
     FROM trip_data
     JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
     JOIN taxi_zone tz2 ON trip_data.DOLocationID = tz2.location_id
     GROUP BY tz1.Zone, tz2.Zone;
 
--- (Option 1) Find the number of trips for the pair of taxi zones with the highest average trip time
+-- (Query 1) Find the number of trips for the pair of taxi zones with the highest average trip time
 SELECT pickup_zone, dropoff_zone, avg_trip_time, num_trips
 FROM trip_time_stats_with_count
 ORDER BY avg_trip_time DESC
 LIMIT 1;
 
--- (Option 2) Find the number of trips for the pair of taxi zones with the highest average trip time
+-- (Query 2, equivalent to Query 1) Find the number of trips for the pair of taxi zones with the highest average trip time
 WITH max_avg_time AS (
     SELECT MAX(avg_trip_time) AS max_avg_trip_time
     FROM trip_time_stats_with_count
@@ -155,6 +188,25 @@ WITH max_avg_time AS (
 SELECT pickup_zone, dropoff_zone, avg_trip_time, num_trips
 FROM trip_time_stats_with_count, max_avg_time
 WHERE avg_trip_time = max_avg_trip_time;
+
+-- VERSION 2 (simplification)
+
+CREATE MATERIALIZED VIEW trip_time_stats_with_count AS
+    SELECT tz1.Zone AS pickup_zone,
+           tz2.Zone AS dropoff_zone,
+           COUNT(*) AS num_trips,
+           AVG(tpep_dropoff_datetime - tpep_pickup_datetime) AS avg_trip_time,
+           MIN(tpep_dropoff_datetime - tpep_pickup_datetime) AS min_trip_time,
+           MAX(tpep_dropoff_datetime - tpep_pickup_datetime) AS max_trip_time
+    FROM trip_data
+    JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
+    JOIN taxi_zone tz2 ON trip_data.DOLocationID = tz2.location_id
+    GROUP BY tz1.Zone, tz2.Zone
+    ORDER BY avg_trip_time DESC
+    LIMIT 1;
+
+SELECT pickup_zone, dropoff_zone, avg_trip_time, num_trips
+FROM trip_time_stats_with_count;
 
 --   pickup_zone   | dropoff_zone | avg_trip_time | num_trips 
 -- ----------------+--------------+---------------+-----------
@@ -185,6 +237,8 @@ Options:
 
 >SOLUTION
 ```sql
+-- VERSION 1 (without MV)
+
 SELECT
     tz1.Zone AS pickup_zone,
     COUNT(1) AS number_of_trips
@@ -194,6 +248,46 @@ WHERE trip_data.tpep_pickup_datetime >= ((SELECT MAX(tpep_pickup_datetime) FROM 
 GROUP BY pickup_zone
 ORDER BY number_of_trips DESC
 LIMIT 3;
+
+-- VERSION 2 (with MV and JOIN)
+
+CREATE MATERIALIZED VIEW top_3_busiest_zones_pickups AS
+    WITH max_pickup_datetime AS (
+        SELECT MAX(tpep_pickup_datetime) AS max_pickup_time
+        FROM trip_data
+    )
+    SELECT
+        tz1.Zone AS pickup_zone,
+        COUNT(1) AS number_of_trips
+    FROM trip_data
+    JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
+    JOIN max_pickup_datetime ON trip_data.tpep_pickup_datetime >= (max_pickup_time - INTERVAL '17' HOUR)
+    GROUP BY pickup_zone
+    ORDER BY number_of_trips DESC
+    LIMIT 3;
+
+SELECT pickup_zone, number_of_trips FROM top_3_busiest_zones_pickups;
+
+-- VERSION 3 (with MV and WHERE)
+
+CREATE MATERIALIZED VIEW top_3_busiest_zones_pickups AS
+    WITH max_pickup_datetime AS (
+        SELECT MAX(tpep_pickup_datetime) AS max_pickup_time
+        FROM trip_data
+    )
+    SELECT
+        tz1.Zone AS pickup_zone,
+        COUNT(1) AS number_of_trips
+    FROM trip_data
+    JOIN taxi_zone tz1 ON trip_data.PULocationID = tz1.location_id
+    WHERE trip_data.tpep_pickup_datetime >= (
+        SELECT max_pickup_time - INTERVAL '17' HOUR FROM max_pickup_datetime
+    )
+    GROUP BY pickup_zone
+    ORDER BY number_of_trips DESC
+    LIMIT 3;
+
+SELECT pickup_zone, number_of_trips FROM top_3_busiest_zones_pickups;
 
 --      pickup_zone     | number_of_trips 
 -- ---------------------+-----------------
