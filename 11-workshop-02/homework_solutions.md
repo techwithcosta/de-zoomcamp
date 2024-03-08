@@ -142,7 +142,7 @@ FROM trip_time_stats;
 --  Yorkville East | Steinway     | 23:59:33
 -- (1 row)
 ```
->ANSWER
+>ANSWER ✅
 ```
 Yorkville East, Steinway
 ```
@@ -259,7 +259,7 @@ FROM trip_time_stats_with_count;
 --  Yorkville East | Steinway     | 23:59:33      |         1
 -- (1 row)
 ```
->ANSWER
+>ANSWER ✅
 ```
 1
 ```
@@ -323,7 +323,7 @@ SELECT pickup_zone, number_of_trips FROM top_3_busiest_zones_pickups;
 --  JFK Airport         |              17
 -- (3 rows)
 ```
->ANSWER
+>ANSWER ✅
 ```
 LaGuardia Airport, Lincoln Square East, JFK Airport
 ```
