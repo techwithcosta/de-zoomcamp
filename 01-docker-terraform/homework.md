@@ -26,12 +26,12 @@ Which tag has the following text? - *Automatically remove the container when it 
 - `--rm`
 
 >SOLUTION
-```
+```bash
 docker run --help
 
---rm    Automatically remove the container when it exits
+# --rm    Automatically remove the container when it exits
 ```
->ANSWER
+>ANSWER ✅
 ```
 --rm
 ```
@@ -50,17 +50,17 @@ What is version of the package *wheel* ?
 - 58.1.0
 
 >SOLUTION
-```
+```bash
 docker run -it --entrypoint=bash python:3.9
 
-root@045bf8cb0df2:/# pip list
-Package    Version
----------- -------
-pip        23.0.1
-setuptools 58.1.0
-wheel      0.42.0
+# root@045bf8cb0df2:/# pip list
+# Package    Version
+# ---------- -------
+# pip        23.0.1
+# setuptools 58.1.0
+# wheel      0.42.0
 ```
->ANSWER
+>ANSWER ✅
 ```
 0.42.0
 ```
@@ -74,7 +74,7 @@ We'll use the green taxi trips from September 2019:
 ```wget https://github.com/DataTalksClub/nyc-tlc-data/releases/download/green/green_tripdata_2019-09.csv.gz```
 
 >SOLUTION
-```
+```bash
 URL="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/green/green_tripdata_2019-09.csv.gz"
 
 docker run -it \
@@ -97,7 +97,7 @@ You will also need the dataset with zones:
 Download this data and put it into Postgres (with jupyter notebooks or with a pipeline)
 
 >SOLUTION
-```
+```bash
 URL="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/misc/taxi_zone_lookup.csv"
 
 docker run -it \
@@ -128,7 +128,7 @@ Remember that `lpep_pickup_datetime` and `lpep_dropoff_datetime` columns are in 
 - 89009
 
 >SOLUTION
-```
+```sql
 SELECT
     COUNT(*) AS total_trips
 FROM
@@ -137,7 +137,7 @@ WHERE
     DATE (lpep_pickup_datetime) = '2019-09-18'
     AND DATE (lpep_dropoff_datetime) = '2019-09-18';
 ```
->ANSWER
+>ANSWER ✅
 ```
 15612
 ```
@@ -153,7 +153,7 @@ Use the pick up time for your calculations.
 - 2019-09-21
 
 >SOLUTION
-```
+```sql
 SELECT
     DATE (lpep_pickup_datetime) AS pickup_date,
     trip_distance
@@ -164,7 +164,7 @@ ORDER BY
 LIMIT
     1;
 ```
->ANSWER
+>ANSWER ✅
 ```
 2019-09-26
 ```
@@ -182,7 +182,7 @@ Which were the 3 pick up Boroughs that had a sum of total_amount superior to 500
 - "Brooklyn" "Queens" "Staten Island"
 
 >SOLUTION
-```
+```sql
 SELECT
     zpu."Borough",
     SUM(total_amount) AS total_amount_sum
@@ -201,7 +201,7 @@ ORDER BY
 LIMIT
     3;
 ```
->ANSWER
+>ANSWER ✅
 ```
 "Brooklyn" "Manhattan" "Queens"
 ```
@@ -220,7 +220,7 @@ Note: it's not a typo, it's `tip` , not `trip`
 - Long Island City/Queens Plaza
 
 >SOLUTION
-```
+```sql
 SELECT
     zpu."Zone" AS pick_up_zone,
     zdo."Zone" AS drop_off_zone,
@@ -246,7 +246,7 @@ ORDER BY
 LIMIT
     1;
 ```
->ANSWER
+>ANSWER ✅
 ```
 JFK Airport
 ```
@@ -264,7 +264,7 @@ Modify the files as necessary to create a GCP Bucket and Big Query Dataset.
 
 >SOLUTION
 ```
-# main.tf
+// main.tf
 
 terraform {
   required_providers {
@@ -312,7 +312,7 @@ resource "google_bigquery_dataset" "dataset" {
 
 >SOLUTION
 ```
-# variables.tf
+// variables.tf
 
 variable "credentials" {
   description = "My Credentials"
@@ -362,10 +362,10 @@ terraform apply
 Paste the output of this command into the homework submission form.
 
 >SOLUTION
-```
+```bash
 terraform apply
 ```
->ANSWER
+>ANSWER ✅
 ```
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
   + create

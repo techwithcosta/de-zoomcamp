@@ -53,7 +53,7 @@ Once the dataset is loaded, what's the shape of the data?
 * 544,898 rows x 20 columns
 * 133,744 rows x 20 columns
 
->ANSWER
+>ANSWER ✅
 ```
 266,855 rows x 20 columns
 ```
@@ -67,7 +67,7 @@ Upon filtering the dataset where the passenger count is greater than 0 _and_ the
 * 139,370 rows
 * 266,856 rows
 
->ANSWER
+>ANSWER ✅
 ```
 139,370 rows
 ```
@@ -81,7 +81,7 @@ Which of the following creates a new column `lpep_pickup_date` by converting `lp
 * `data['lpep_pickup_date'] = data['lpep_pickup_datetime'].dt.date`
 * `data['lpep_pickup_date'] = data['lpep_pickup_datetime'].dt().date()`
 
->ANSWER
+>ANSWER ✅
 ```
 data['lpep_pickup_date'] = data['lpep_pickup_datetime'].dt.date
 ```
@@ -95,7 +95,7 @@ What are the existing values of `VendorID` in the dataset?
 * 1, 2, 3, 4
 * 1
 
->ANSWER
+>ANSWER ✅
 ```
 1 or 2
 ```
@@ -109,7 +109,7 @@ How many columns need to be renamed to snake case?
 * 2
 * 4
 
->ANSWER
+>ANSWER ✅
 ```
 4
 ```
@@ -123,7 +123,7 @@ Once exported, how many partitions (folders) are present in Google Cloud?
 * 67
 * 108
 
->ANSWER
+>ANSWER ✅
 ```
 96 (but it seems like 95 is the correct number)
 ```
